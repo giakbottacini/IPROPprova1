@@ -151,6 +151,15 @@ void Time::increment()
 
 
 
+
+
+
+
+
+
+
+
+
   // @sect3{Boundary values}
   // Dirichlet boundary conditions for the velocity inlet and walls.
 template <int dim>
@@ -200,31 +209,105 @@ void BoundaryValues<dim>::vector_value(const Point<dim> &p,
 
   
 
+
+
+
+
+
+
+
+
+
+
+
 void create_triangulation(Triangulation<2> &tria)
   {
-      const std::string filename = "./Meshes/BOXED_ELLIPSE.msh";
-	  	cout << "Reading from " << filename << endl;
-	  	std::ifstream input_file(filename);
-	  	GridIn<2>       grid_in;
-	  	grid_in.attach_triangulation(triangulation);
-	  	grid_in.read_msh(input_file);
+    const std::string filename = "./Meshes/BOXED_ELLIPSE.msh";
+    cout << "Reading from " << filename << endl;
+    std::ifstream input_file(filename);
+    GridIn<2>       grid_in;
+    grid_in.attach_triangulation(triangulation);            //Attach this triangulation to be fed with the grid data
+    grid_in.read_msh(input_file);                           //Read grid data from an msh file
 
-	  	const types::manifold_id emitter = 1;
-	  	const Point<dim> center(X,0.);
-	  	SphericalManifold<2> emitter_manifold(center);
+    const types::manifold_id emitter = 1;                   //The type used to denote manifold indicators associated with every object of the mesh
+    const Point<dim> center(X,0.);
+    SphericalManifold<2> emitter_manifold(center);
 
-	  	const types::manifold_id collector = 2;
-	  	CollectorGeometry<2> collector_manifold;
+    const types::manifold_id collector = 2;
+    CollectorGeometry<2> collector_manifold;                // !!!
 
-	  	tria.set_all_manifold_ids_on_boundary(1, emitter);
-	  	tria.set_manifold(emitter, emitter_manifold);
-	  	tria.set_all_manifold_ids_on_boundary(2, collector);
-	  	tria.set_manifold(collector, collector_manifold);
-	  	cout  << "Active cells: " << tria.n_active_cells() << endl;
+    tria.set_all_manifold_ids_on_boundary(1, emitter);
+    tria.set_manifold(emitter, emitter_manifold);
+    tria.set_all_manifold_ids_on_boundary(2, collector);
+    tria.set_manifold(collector, collector_manifold);
+    cout  << "Active cells: " << tria.n_active_cells() << endl;
   }
 
 
-  
+// Collector Manifold - START
+
+double get_collector_height(const double &p)
+{
+if (p <= g || p >= g + collector_length)
+  return 0.;
+
+const double a = collector_length/2.;
+const double b = collector_height;
+
+return b*std::sqrt(1.-p/a);       //p e a a quadrato??
+}
+
+
+
+template <int dim>
+class CollectorGeometry : public ChartManifold<dim, dim, dim-1>     //ChartManifold is a class describes mappings that can be expressed in terms of charts.
+  {
+public:
+  virtual Point<dim-1> pull_back(const Point<dim> &space_point) const override;        //Pull back the given point in spacedim to the Euclidean chartdim dimensional space
+
+  virtual Point<dim> push_forward(const Point<dim-1> &chart_point) const override;     //Given a point in the chartdim dimensional Euclidean space, this method returns a point on the manifold embedded in the spacedim Euclidean space.
+
+  virtual std::unique_ptr<Manifold<dim, dim>> clone() const override;                  //Return a copy of this manifold
+
+  };
+
+template <int dim>
+std::unique_ptr<Manifold<dim, dim>> CollectorGeometry<dim>::clone() const
+  {
+return std::make_unique<CollectorGeometry<dim>>();
+  }
+
+
+template <int dim>
+Point<dim> CollectorGeometry<dim>::push_forward(const Point<dim-1>  &x) const          //Input: a chart point that in our case is a 1D point 
+  {
+const double y = get_collector_height(x[0]);
+
+Point<dim> p;
+p[0] = x[0]; p[1] = y;
+
+if (dim == 3) {
+  p[2] = x[1];
+}
+
+return p;                                                                              //Output: a point of our collector in 2D 
+  }
+
+
+template <int dim>
+Point<dim-1>  CollectorGeometry<dim>::pull_back(const Point<dim> &p) const             //Input: a point in our 2D mesh
+{
+  Point<dim-1> x;
+  x[0] = p[0];
+
+if (dim == 3) {
+  x[1] = p[2];
+}
+
+return x;                                                                              //Output: a chart point that in our case is a 1D point
+}  
+// Collector Manifold - END
+
 
   
 

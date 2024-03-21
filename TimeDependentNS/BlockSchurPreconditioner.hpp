@@ -56,9 +56,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace fluid
-{
-  using namespace dealii;
+using namespace dealii;
 
 // @sect3{Block preconditioner}
   //
@@ -90,41 +88,41 @@ namespace fluid
   // $\tilde{A}^{-1}$, which can be transformed into solving three symmetric
   // linear
   // systems.
-  class BlockSchurPreconditioner : public Subscriptor
-  {
-  public:
-    BlockSchurPreconditioner(
-      TimerOutput &timer,      
-      double gamma,
-      double viscosity,
-      double dt,
-      const std::vector<IndexSet> &owned_partitioning,
-      const PETScWrappers::MPI::BlockSparseMatrix &system,
-      const PETScWrappers::MPI::BlockSparseMatrix &mass,
-      PETScWrappers::MPI::BlockSparseMatrix &schur);
+class BlockSchurPreconditioner : public Subscriptor
+{
+public:
+  BlockSchurPreconditioner(
+    TimerOutput &timer,      
+    double gamma,
+    double viscosity,
+    double dt, 
+    const std::vector<IndexSet> &owned_partitioning,
+    const PETScWrappers::MPI::BlockSparseMatrix &system,
+    const PETScWrappers::MPI::BlockSparseMatrix &mass,
+    PETScWrappers::MPI::BlockSparseMatrix &schur);
 
-    void vmult(PETScWrappers::MPI::BlockVector &dst,
-               const PETScWrappers::MPI::BlockVector &src) const;
+  void vmult(PETScWrappers::MPI::BlockVector &dst,
+              const PETScWrappers::MPI::BlockVector &src) const;
 
-  private:
-    TimerOutput &timer;          //This class can be used to generate formatted output from time measurements of different subsections in a program
-    const double gamma;          //Parameter of Grad-div stabilization 
-    const double viscosity;
-    const double dt;
+private:
+  TimerOutput &timer;          //This class can be used to generate formatted output from time measurements of different subsections in a program
+  const double gamma;          //Parameter of Grad-div stabilization 
+  const double viscosity;
+  const double dt;
 
-    const SmartPointer<const PETScWrappers::MPI::BlockSparseMatrix>
-      system_matrix;
-    const SmartPointer<const PETScWrappers::MPI::BlockSparseMatrix> mass_matrix;
-    // As discussed, ${[B(diag(M_u))^{-1}B^T]}$ and its inverse
-    // need to be computed.
-    // We can either explicitly compute it out as a matrix, or define
-    // it as a class with a vmult operation.
-    // The second approach saves some computation to construct the matrix,
-    // but leads to slow convergence in CG solver because it is impossible
-    // to apply a preconditioner. We go with the first route.
-    const SmartPointer<PETScWrappers::MPI::BlockSparseMatrix> mass_schur;    //Schur complement of the velocity mass
-  };
+  const SmartPointer<const PETScWrappers::MPI::BlockSparseMatrix>
+    system_matrix;
+  const SmartPointer<const PETScWrappers::MPI::BlockSparseMatrix> mass_matrix;
+  // As discussed, ${[B(diag(M_u))^{-1}B^T]}$ and its inverse
+  // need to be computed.
+  // We can either explicitly compute it out as a matrix, or define
+  // it as a class with a vmult operation.
+  // The second approach saves some computation to construct the matrix,
+  // but leads to slow convergence in CG solver because it is impossible
+  // to apply a preconditioner. We go with the first route.
+  const SmartPointer<PETScWrappers::MPI::BlockSparseMatrix> mass_schur;    //Schur complement of the velocity mass
+};
 
-}
+
 
 #endif
