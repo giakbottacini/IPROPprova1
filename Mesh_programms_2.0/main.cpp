@@ -40,7 +40,15 @@ s_data.distance_emitter_collector=json_data["distance_emitter_collector"];
 s_data.distance_Tedge_outlet=json_data["distance_Tedge_outlet"];
 s_data.distance_emitter_inlet=json_data["distance_emitter_inlet"];
 s_data.distance_emitter_up_bottom=json_data["distance_emitter_up_bottom"];
-s_data.mesh_ref_1=json_data["mesh_ref_1"];        
+s_data.mesh_ref_1=json_data["mesh_ref_1"];
+s_data.mesh_ref_2=json_data["mesh_ref_2"];
+s_data.mesh_ref_3=json_data["mesh_ref_3"];
+s_data.mesh_ref_4=json_data["mesh_ref_4"];
+s_data.cylinder_emitter_radius=json_data["cylinder_emitter_radius"];
+s_data.box_profile_semi_minor_axis=json_data["box_profile_semi_minor_axis"];
+s_data.box_profile_semi_major_axis=json_data["box_profile_semi_major_axis"];
+s_data.mesh_algorithm=json_data["mesh_algorithm"];
+       
 
 
 
@@ -63,7 +71,7 @@ if (!outFile.is_open()) {
 
 Build_Geometry my_geometry(s_data);
 
-// Write data to the file exploiting the methods
+// Write data to the file exploiting the methods of the Build_Geometry object
 
 my_geometry.write_head(outFile);
 my_geometry.write_profile(outFile);
@@ -73,6 +81,10 @@ my_geometry.write_loops(outFile);
 my_geometry.write_surface(outFile);
 my_geometry.write_physical_groups(outFile);
 my_geometry.write_boundary_layer(outFile);
+my_geometry.write_emitter_cylinder(outFile);
+my_geometry.write_profile_box(outFile);
+my_geometry.write_min_field(outFile);
+my_geometry.write_algorithm(outFile);
 
 
 // Close the file
@@ -80,6 +92,5 @@ outFile.close();
 
 std::cout << "Data has been written to the file successfully." << std::endl;
 
-      
 return 0;
 }

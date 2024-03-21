@@ -9,7 +9,7 @@ class Point{
     double y_coord;              //y-coord
     double z_coord;              //z-coord
     double local_mesh_ref;       //mesh refinement local to the Point
-    static int count_tag;        //it count the tags of all the Points
+    static int count_tag;        //it counts the tags of all the Points
     int tag;                     //tag of the Point
 
  public:
