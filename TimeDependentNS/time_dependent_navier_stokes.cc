@@ -73,22 +73,51 @@
 
 
 
+// Physical Constants
+const double eps_0 = 8.854 * 1.e-12; //[F/m]= [C^2 s^2 / kg / m^3]
+const double eps_r = 1.0006;
+const double q0 = 1.602 * 1.e-19; // [C]
+const double kB = 1.381 * 1.e-23 ; //[J/K]
+
+const bool stratosphere = false; // if false, use atmospheric 0 km conditions
+
+// Input Parameters
+const double E_ON = 3.31e+6; // onset field threshold [V/m]
+const double E_ref = 7.e+7; // [V/m] maximum field value
+const double N_ref = 1.e+13; // [m^-3] maximum density value
+const double N_0 = stratosphere ? 2.2e-3 : 0.5e-3; // [m^-3] ambient ion density
+const double p_amb = stratosphere ? 5474 : 101325;
+const double T = stratosphere ? 217. : 303.; // [K] fluid temperature
+const double p_over_rho = 0.;// Boundary condition at fluid outlet
+const double delta = p_amb/101325*298/T;
+const double rho = stratosphere ? 0.089 : 1.225; // kg m^-3
+const double Mm = 29.e-3; // kg m^-3,average air molar mass
+const double Avo = 6.022e+23; // Avogadro's number
+
+const double q_over_eps_0 = q0 / eps_0; // [m^3 kg C^-1 s^-2]
+const double mu0 = 1.83e-4; // [m^2/s/V] from Moseley
+const double mu = mu0 * delta; // scaled mobility from Moseley      
+const double V_E = kB * T / q0; // [V] ion temperature
+const double D = mu * V_E;
+//const double n_air = rho / Mm * Avo; // m^-3
+
 // Geometry Data
-const double R = 2.5e-4; // [m] emitter edge radius
-const double L = 2.*R; // [m] emitter length
-const double X = -L/2.; // [m] emitter center
+
+// emitter
+const double Ve = 2.e+4; // [V] emitter voltage
+const double Re = 2.5e-5; // [m] emitter radius                                 !!!!
+const double X = -Re; // [m] emitter center                                     !!!!
 
 const double g = 0.02; // [m] interelectrode distance
-const double collector_length = 0.01; ; // [m]
-const double collector_height = 0.002;
-const double mesh_height = 0.02;; // [m]
 
-// Physical Data
-const double V = 1.; // [m/s] inlet velocity
-const double g_y = 9.807; // gravitational acceleration [m/s^2]
-const double q0 = 1.602; // 10^-19 [C]
-const double rho = 1.225; // kg m^-3
-const double E_ON = 3.31e+6; // V/m air electrical breakdown field
+// collector
+const double collector_length = 0.1; // [m]                                     !!!!
+
+// Peek's law (empyrical)
+const double eps = 1.; // wire surface roughness correction coefficient
+const double Ep = E_ON*delta*eps*(1+0.308/std::sqrt(Re*1.e+2*delta));
+const double Ri = Ep/E_ON*Re; // [m] ionization radius
+const double Vi = Ve - Ep*Re*log(Ep/E_ON); // [V] voltage on ionization region boundary
 
 using namespace dealii;
 
@@ -234,7 +263,7 @@ void create_triangulation(Triangulation<2> &tria)
     SphericalManifold<2> emitter_manifold(center);
 
     const types::manifold_id collector = 2;
-    CollectorGeometry<2> collector_manifold;                // !!!
+    CollectorGeometry<2> collector_manifold;                
 
     tria.set_all_manifold_ids_on_boundary(1, emitter);
     tria.set_manifold(emitter, emitter_manifold);
@@ -248,13 +277,21 @@ void create_triangulation(Triangulation<2> &tria)
 
 double get_collector_height(const double &p)
 {
-if (p <= g || p >= g + collector_length)
-  return 0.;
+  const double x = (X-g)/collector_length;
+	double y = 0;
 
-const double a = collector_length/2.;
-const double b = collector_height;
+	if ( abs(x-1.) > 1e-12 && abs(x) > 1e-12 ) {
+		double a0 = 0.2969;
+		double a1 = -0.126;
+		double a2 = -0.3516;
+		double a3 = 0.2843;
+		double a4 = -0.1036; // or -0.1015 for an open trailing edge
+		double t = 0.1; // Last 2 digits of the NACA by 100
 
-return b*std::sqrt(1.-p/a);       //p e a a quadrato??
+		y = 5*t*( a0 * sqrt(x) + a1 * x + a2 * pow(x,2.0) + a3 * pow(x,3.0) + a4 * pow(x,4.0) );
+	}
+
+	return y * collector_length;
 }
 
 
@@ -310,6 +347,7 @@ return x;                                                                       
 
 
   
+
 
   
 
