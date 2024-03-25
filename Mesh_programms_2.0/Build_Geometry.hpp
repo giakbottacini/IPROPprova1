@@ -20,7 +20,7 @@ class Build_Geometry{
      //CONSTRUCTOR
      Build_Geometry(MyDataStruct d): my_data(d) {};
 
-     //METHODS TO COMPUTE POINTSs
+     //METHODS TO COMPUTE POINTS
      std::vector<Point> compute_profile() const;       //this method compute the points that made the airfoil profile
      std::vector<Point> compute_emitter() const;       //this method compute the points that made the emitter
      std::vector<Point> compute_domain()  const;       //this method compute the points that made the rectangular domain
@@ -39,11 +39,9 @@ class Build_Geometry{
      void write_min_field(std::ofstream & ofs) const;          //this method wriets in the output file the min field
      void write_algorithm(std::ofstream & ofs) const;          //this method writes in the output file the meshing algorithm and the algorithm characteristics
 
-     
 };
 
 //FUNCTIONS
 std::vector<double> GCL_nodes(double a, double b, int n);      //auxiliary function that compute the Gauss Cebycev Lobatto nodes
-
 
 #endif //BUILD_GEOMETRY_HPP

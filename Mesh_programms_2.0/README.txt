@@ -1,10 +1,10 @@
 Original code written by Tommaso Andena and Giacomo Bottacini. Politecnico di Milano a.a 2023/2024.
 
-dobbiamo scrivere qua sul readme il significato dei tag del file json siccome non si può commentare (scritti su mydatastruct)
-idea of the code
+vedere il file:"MyDataStruct.hpp" per il significato dei parameteri specificati nel file .json
 
-TODO: - la ala è grande ?
-      - fare un git dove salvare questo tutto
-      - parametrizzare valor BL per farlo meglio
-      - dati coerenti con la corda
+comandi del make file: 1) make -f makefile.mak main         per lanciare il codice 
+                       2) make -f makefile.mak clean        per cancellare tutti gli output .o , executible and .geo file
+
+TODO: - dati coerenti con la corda o funzione con corda diversa?
       - structured json per i vari input (?)
+      - algoritmo dei quads va bene (?)

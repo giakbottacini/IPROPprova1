@@ -47,9 +47,12 @@ s_data.mesh_ref_4=json_data["mesh_ref_4"];
 s_data.cylinder_emitter_radius=json_data["cylinder_emitter_radius"];
 s_data.box_profile_semi_minor_axis=json_data["box_profile_semi_minor_axis"];
 s_data.box_profile_semi_major_axis=json_data["box_profile_semi_major_axis"];
+s_data.BL_ratio = json_data["BL_ratio"];
+s_data.BL_size = json_data["BL_size"];
+s_data.BL_thickness=json_data["BL_thickness"];
+s_data.BL_fanPoints = json_data["BL_fanPoints"];
 s_data.mesh_algorithm=json_data["mesh_algorithm"];
        
-
 
 
 //##################### WRITE THE COORDINATES IN A .GEO OUTPUT FILE ##################################################################################

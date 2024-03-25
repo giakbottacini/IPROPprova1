@@ -49,17 +49,17 @@ std::vector<Point> Build_Geometry::compute_profile() const{
     double first = 0;                            
     double second = this->my_data.chord_length; 
 
-    //CODICE PER NODI EQUISPAZIATI
-    //int n_sub_intervals = this->my_data.NACA_points - 1;   //number of sub intervals in the chord
+    /*CODICE PER NODI EQUISPAZIATI
+    int n_sub_intervals = this->my_data.NACA_points - 1;   //number of sub intervals in the chord
 
-    //double h = (second - first)/(n_sub_intervals);  //length of the sub interval
+    double h = (second - first)/(n_sub_intervals);  //length of the sub interval
 
-    //for(size_t i = 0 ; i < this->my_data.NACA_points; ++i){
+    for(size_t i = 0 ; i < this->my_data.NACA_points; ++i){
 
-        //x_coord[i] = i*h; //just this since we start from zero
+        x_coord[i] = i*h; //just this since we start from zero
 
-    //}
-    //FINE CODICE PER NODI EQUISPAZIATI
+    }
+    FINE CODICE PER NODI EQUISPAZIATI*/
 
     //we compute the x_coordinates exploiting the GCL_nodes function
     x_coord = GCL_nodes(first, second, this->my_data.NACA_points-1);
@@ -359,14 +359,14 @@ void Build_Geometry::write_boundary_layer(std::ofstream & ofs) const{
     ofs << std::endl;
     ofs << "//BOUNDARY LAYER"<<std::endl;
 
-    ofs << "Field[1]=BoundaryLayer;"<<std::endl;                 //Type of gmsh field
-    ofs << "Field[1].CurvesList={1,2,3,4};"<<std::endl;          //Tags of curves in the geometric model for which a boundary layer is needed
-    ofs << "Field[1].Quads=1;"<<std::endl;                       //Generate recombined elements in the boundary layer
-    ofs << "Field[1].Ratio=1.2;"<<std::endl;                     //Size ratio between two successive layers
-    ofs << "Field[1].Size= 0.002336;"<<std::endl;                //Mesh size normal to the curve
-    ofs << "Field[1].Thickness=0.06;"<<std::endl;                //Maximal thickness of the boundary layer
-    ofs << "Field[1].FanPointsList={100};"<<std::endl;           //Tags of points in the geometric model for which a fan is created
-    ofs << "Field[1].FanPointsSizesList={22};"<<std::endl;       //Number of elements in the fan for each fan point. If not present default value Mesh.BoundaryLayerFanElements
+    ofs << "Field[1]=BoundaryLayer;"<<std::endl;                                           //Type of gmsh field
+    ofs << "Field[1].CurvesList={1,2,3,4};"<<std::endl;                                    //Tags of curves in the geometric model for which a boundary layer is needed
+    ofs << "Field[1].Quads=1;"<<std::endl;                                                 //Generate recombined elements in the boundary layer
+    ofs << "Field[1].Ratio="<<my_data.BL_ratio<<";"<<std::endl;                            //Size ratio between two successive layers
+    ofs << "Field[1].Size="<< my_data.BL_size<< ";"<<std::endl;                            //Mesh size normal to the curve
+    ofs << "Field[1].Thickness=" << my_data.BL_thickness<<";"<<std::endl;                  //Maximal thickness of the boundary layer
+    ofs << "Field[1].FanPointsList={"<<my_data.NACA_points<<"};"<<std::endl;               //Tags of points in the geometric model for which a fan is created
+    ofs << "Field[1].FanPointsSizesList={"<< my_data.BL_fanPoints<< "};"<<std::endl;       //Number of elements in the fan for each fan point. If not present default value Mesh.BoundaryLayerFanElements
     ofs << "BoundaryLayer Field = 1;"<<std::endl;
 
     return;

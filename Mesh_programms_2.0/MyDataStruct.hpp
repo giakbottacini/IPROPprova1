@@ -3,7 +3,7 @@
 
 #include <string>
 
-struct MyDataStruct{               //this struct contains all the data of the problem
+struct MyDataStruct{                            //this struct contains all the data of the problem
    
    // DATA OF THE NACA
    std::string airfoil_type;                    //string that stores the name of the type of the airfoil  eg: "NACA0012"
@@ -30,6 +30,12 @@ struct MyDataStruct{               //this struct contains all the data of the pr
    double cylinder_emitter_radius;              //double that stores the length of half the edge of the box that wraps the emitter
    double box_profile_semi_minor_axis;          //double that stores the length of half the semi minor edge of the box that wraps the profile
    double box_profile_semi_major_axis;          //double that stores the length of half the semi major edge of the box that wraps the profile
+
+   // BOUNDARY LAYER
+   double BL_ratio;                             //double that stores ratio between two successive layers of BL
+   double BL_size;                              //double that stores the mesh size normal to the curve
+   double BL_thickness;                         //double that stores the maximal thickness of the BL
+   int BL_fanPoints;                            //int that stores the number of elements in the fan for each fan point(one for us)
 
    // ALGORITHM
    int mesh_algorithm;                          //int that stores the meshing algorithm that we want to use (see gmsh documentation)
